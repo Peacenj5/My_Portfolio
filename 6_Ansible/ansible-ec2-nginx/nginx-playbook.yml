@@ -1,0 +1,36 @@
+- name: Install and configure Nginx
+  hosts: webserver
+  become: yes
+  tasks:
+    - name: Update package list
+      yum:
+        update_cache: yes
+
+    - name: Install Nginx
+      yum:
+        name: nginx
+        state: present
+
+    - name: Start Nginx service
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Deploy a custom index.html
+      copy:
+        content: "<h1>Welcome to Nginx Web Server!</h1>"
+        dest: /var/www/html/index.html
+
+  tasks:
+  - name: Ensure Nginx root directory exists
+    file:
+      path: /var/www/html
+      state: directory
+      mode: '0755'
+
+  - name: Deploy a custom index.html
+    copy:
+      src: index.html
+      dest: /var/www/html/index.html
+      mode: '0644'
